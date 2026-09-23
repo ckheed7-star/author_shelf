@@ -1,35 +1,347 @@
-name: Build AuthorShelf APK
+import 'package:flutter/material.dart';
 
-on:
-  workflow_dispatch:
-  push:
-    branches:
-      - main
+void main() {
+  runApp(const AuthorShelfApp());
+}
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+class AuthorShelfApp extends StatelessWidget {
+  const AuthorShelfApp({super.key});
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'AuthorShelf',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF6D4C41),
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF7F4EF),
+      ),
+      home: const HomePage(),
+    );
+  }
+}
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
-      - name: Create Android project files
-        run: flutter create --platforms=android .
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'AuthorShelf',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFFF7F4EF),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.search),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.person_outline),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Your stories.',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Text(
+              'Your bookshelf.',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF795548),
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Manage your books, drafts and author profile in one place.',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 24),
 
-      - name: Get dependencies
-        run: flutter pub get
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton.icon(
+                onPressed: () {},
+                icon: const Icon(Icons.add),
+                label: const Text(
+                  'ADD NEW BOOK',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF6D4C41),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+            ),
 
-      - name: Build APK
-        run: flutter build apk --release
+            const SizedBox(height: 30),
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: AuthorShelf-APK
-          path: build/app/outputs/flutter-apk/app-release.apk
+            Row(
+              children: [
+                Expanded(
+                  child: statCard(
+                    '2',
+                    'Books',
+                    Icons.menu_book,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: statCard(
+                    '1',
+                    'Published',
+                    Icons.public,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: statCard(
+                    '1',
+                    'Draft',
+                    Icons.edit_note,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 30),
+
+            const Text(
+              'MY BOOKS',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: bookCard(
+                    'ERASED',
+                    'Joel Chimbeja',
+                    'Published',
+                    Icons.auto_stories,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: bookCard(
+                    'THE BLOODLINE OATH',
+                    'Joel Chimbeja',
+                    'Draft',
+                    Icons.menu_book,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 30),
+
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(18),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Color(0xFF6D4C41),
+                      child: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Joel Chimbeja',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Author Profile',
+                            style: TextStyle(
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 17,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: 0,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.library_books_outlined),
+            selectedIcon: Icon(Icons.library_books),
+            label: 'Bookshelf',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.edit_outlined),
+            selectedIcon: Icon(Icons.edit),
+            label: 'Drafts',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget statCard(
+    String number,
+    String label,
+    IconData icon,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            color: const Color(0xFF6D4C41),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            number,
+            style: const TextStyle(
+              fontSize: 21,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget bookCard(
+    String title,
+    String author,
+    String status,
+    IconData icon,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: 190,
+          decoration: BoxDecoration(
+            color: const Color(0xFF6D4C41),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: 48,
+                  color: Colors.white,
+                ),
+                const SizedBox(height: 14),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  author,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          status,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: status == 'Published'
+                ? Colors.green
+                : Colors.orange,
+          ),
+        ),
+      ],
+    );
+  }
+}
